@@ -13,6 +13,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 
 
 public class CategoryControllerTest {
@@ -80,5 +81,57 @@ public class CategoryControllerTest {
                 .expectStatus()
                 .isCreated();
 
+    }
+
+    @Test
+    public void updateCategoryWhenCategoryDoesNotFound() {
+
+        BDDMockito.given(categoryRepository.save(any(Category.class)))
+                .willReturn(Mono.just(Category
+                        .builder()
+                        .description("test")
+                        .build()));
+
+        Mono<Category> categoryMono = Mono.just(Category
+                .builder()
+                .description("test")
+                .build());
+
+        this.webTestClient
+                .put()
+                .uri(API_V_1_CATEGORIES + "/1234")
+                .body(categoryMono, Category.class)
+                .exchange()
+                .expectStatus()
+                .isCreated();
+    }
+
+    @Test
+    public void updateCategory() {
+
+        BDDMockito.given(categoryRepository.findById(anyString()))
+                .willReturn(Mono.just(Category
+                        .builder()
+                        .description("test")
+                        .build()));
+
+        BDDMockito.given(categoryRepository.save(any(Category.class)))
+                .willReturn(Mono.just(Category
+                        .builder()
+                        .description("test")
+                        .build()));
+
+        Mono<Category> categoryMono = Mono.just(Category
+                .builder()
+                .description("test")
+                .build());
+
+        this.webTestClient
+                .put()
+                .uri(API_V_1_CATEGORIES + "/1234")
+                .body(categoryMono, Category.class)
+                .exchange()
+                .expectStatus()
+                .isOk();
     }
 }

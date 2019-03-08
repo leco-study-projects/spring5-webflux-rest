@@ -89,4 +89,61 @@ public class VendorControllerTest {
                 .isCreated();
 
     }
+
+    @Test
+    public void updateCategoryWhenCategoryDoesNotFound() {
+
+        BDDMockito.given(repository.save(any(Vendor.class)))
+                .willReturn(Mono.just(Vendor
+                        .builder()
+                        .firstName("l3co")
+                        .lastName("co")
+                        .build()));
+
+        Mono<Vendor> createVendor = Mono.just(Vendor
+                .builder()
+                .firstName("l3co")
+                .lastName("co")
+                .build());
+
+        this.webTestClient
+                .put()
+                .uri(API_V_1_VENDORS + "/1234")
+                .body(createVendor, Vendor.class)
+                .exchange()
+                .expectStatus()
+                .isCreated();
+    }
+
+    @Test
+    public void updateCategory() {
+
+        BDDMockito.given(repository.findById(Mockito.anyString()))
+                .willReturn(Mono.just(Vendor
+                        .builder()
+                        .firstName(FIRST_NAME)
+                        .lastName(LAST_NAME)
+                        .build()));
+
+        BDDMockito.given(repository.save(any(Vendor.class)))
+                .willReturn(Mono.just(Vendor
+                        .builder()
+                        .firstName("l3co")
+                        .lastName("co")
+                        .build()));
+
+        Mono<Vendor> createVendor = Mono.just(Vendor
+                .builder()
+                .firstName("l3co")
+                .lastName("co")
+                .build());
+
+        this.webTestClient
+                .put()
+                .uri(API_V_1_VENDORS + "/1234")
+                .body(createVendor, Vendor.class)
+                .exchange()
+                .expectStatus()
+                .isOk();
+    }
 }
